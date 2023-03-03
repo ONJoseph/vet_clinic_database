@@ -22,3 +22,28 @@ VALUES ('Charmander', '2020-02-08', -11, FALSE, 0, 'Pokemon'),
        ('Blossom', '1998-10-13', 17, TRUE, 3, 'Powerpuff Girls'),
        ('Ditto', '2022-05-14', 22, TRUE, 4, 'Pokemon');
        
+--Modify your inserted animals to include owner information (owner_id)
+INSERT INTO owners (full_name, age) VALUES 
+('Sam Smith', 34),
+('Jennifer Orwell', 19),
+('Bob', 45),
+('Melody Pond', 77),
+('Dean Winchester', 14),
+('Jodie Whittaker', 38);
+
+INSERT INTO species (name) VALUES 
+('Pokemon'),
+('Digimon');
+
+INSERT INTO animals (name, species_id, owner_id) VALUES 
+('Agumon', 2, 1),
+('Gabumon', 2, 2),
+('Pikachu', 1, 2),
+('Devimon', 2, 3),
+('Plantmon', 1, 3),
+('Charmander', 1, 4),
+('Squirtle', 1, 4),
+('Blossom', 1, 4),
+('Angemon', 2, 5),
+('Boarmon', 1, 5);
+
