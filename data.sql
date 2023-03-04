@@ -225,29 +225,3 @@ WHERE animals.name = 'Blossom'
 AND vets.name = 'William Tatcher';
 COMMIT;
 SELECT * FROM visits;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
