@@ -88,6 +88,127 @@ SELECT animals.name FROM animals JOIN owners ON animals.owner_id = owners.id WHE
 -- Who owns the most animals?
 SELECT owners.full_name, COUNT(animals.id) AS num_animals FROM owners JOIN animals ON owners.id = animals.owner_id GROUP BY owners.full_name ORDER BY num_animals DESC LIMIT 1;
 
+-- Write queries to answer the following
+-- Who was the last animal seen by William Tatcher?
+SELECT vets.name, animals.name, visits.date_of_visit
+FROM visits
+INNER JOIN animals ON animals.id = visits.animal_id
+INNER JOIN vets ON vets.id = visits.vet_id
+WHERE vets.name = 'William Tatcher'
+ORDER BY visits.date_of_visit DESC
+LIMIT 1;
+
+-- How many different animals did Stephanie Mendez see?
+SELECT vets.name, COUNT(visits.animal_id)
+FROM visits
+INNER JOIN animals ON animals.id = visits.animal_id
+INNER JOIN vets ON vets.id = visits.vet_id
+WHERE vets.name = 'Stephanie Mendez'
+GROUP BY vets.name;
+
+-- List all vets and their specialties, including vets with no specialties.
+SELECT vets.name, species.name AS speciality
+FROM vets
+LEFT OUTER JOIN specializations ON specializations.vet_id = vets.id
+LEFT JOIN species ON species.id = specializations.spec_id;
+
+-- List all animals that visited Stephanie Mendez between April 1st and August 30th, 2020.
+SELECT animals.name, vets.name, visits.date_of_visit
+FROM visits
+INNER JOIN animals ON animals.id = visits.animal_id
+INNER JOIN vets ON vets.id = visits.vet_id
+WHERE vets.name = 'Stephanie Mendez'
+AND visits.date_of_visit BETWEEN '2020-04-01' AND '2020-08-30'
+
+-- What animal has the most visits to vets?
+SELECT animals.name, COUNT(visits.date_of_visit) AS visits
+FROM visits
+INNER JOIN animals ON animals.id = visits.animal_id
+INNER JOIN vets ON vets.id = visits.vet_id
+GROUP BY animals.id
+ORDER BY COUNT(visits.date_of_visit) DESC
+LIMIT 1
+
+-- Who was Maisy Smith's first visit?
+SELECT vets.name, animals.name, visits.date_of_visit
+FROM visits
+INNER JOIN animals ON animals.id = visits.animal_id
+INNER JOIN vets ON vets.id = visits.vet_id
+WHERE vets.name = 'Maisy Smith'
+ORDER BY visits.date_of_visit ASC
+LIMIT 1
+
+-- Details for most recent visit: animal information, vet information, and date of visit.
+SELECT visits.date_of_visit, animals.*, vets.*
+FROM visits
+FULL OUTER JOIN animals ON animals.id = visits.animal_id
+FULL OUTER JOIN vets ON vets.id = visits.vet_id
+ORDER BY visits.date_of_visit ASC
+
+-- How many visits were with a vet that did not specialize in that animal's species?
+SELECT COUNT(*) AS visits_of_vets_not_specialize
+FROM visits
+INNER JOIN vets ON vets.id = visits.vet_id
+INNER JOIN animals ON animals.id = visits.animal_id
+WHERE animals.species_id NOT IN (
+	SELECT coalesce(specializations.spec_id, -1)
+	FROM vets
+	LEFT OUTER JOIN specializations ON specializations.vet_id = vets.id
+	WHERE vets.id = visits.vet_id
+)
+
+-- What specialty should Maisy Smith consider getting? Look for the species she gets the most.
+SELECT vets.name, species.name, COUNT(animals.species_id)
+FROM visits
+INNER JOIN vets ON vets.id = visits.vet_id
+INNER JOIN animals ON animals.id = visits.animal_id
+INNER JOIN species ON species.id = animals.species_id
+WHERE vets.name = 'Maisy Smith'
+GROUP BY vets.name, species.name
+ORDER BY COUNT(animals.species_id) DESC
+LIMIT 1
+
+SELECT * FROM specializations;
+
+-- Modify inserted animals so it includes the species_id value:
+-- If the name ends in "mon" it will be Digimon
+-- All other animals are Pokemon
+BEGIN;
+UPDATE animals
+SET species_id = (SELECT id FROM species WHERE name = 'Digimon')
+WHERE name like '%mon';
+UPDATE animals
+SET species_id = (SELECT id FROM species WHERE name = 'Pokemon')
+WHERE species_id is null;
+COMMIT;
+SELECT * from aniSmals;
+
+-- Modify inserted animals to include owner information (owner_id)
+SELECT * FROM owners;
+BEGIN;
+UPDATE animals
+SET owner_id = (SELECT id FROM owners WHERE full_name = 'Sam Smith')
+WHERE name like 'Agumon';
+
+UPDATE animals
+SET owner_id = (SELECT id FROM owners WHERE full_name = 'Jennifer Orwell')
+WHERE name IN ('Gabumon', 'Pikachu');
+
+UPDATE animals
+SET owner_id = (SELECT id FROM owners WHERE full_name = 'Bob')
+WHERE name IN ('Devimon', 'Plantmon');
+
+UPDATE animals
+SET owner_id = (SELECT id FROM owners WHERE full_name = 'Melody Pond')
+WHERE name IN ('Charmander', 'Squirtle', 'Blossom');
+
+UPDATE animals
+SET owner_id = (SELECT id FROM owners WHERE full_name = 'Dean Winchester')
+WHERE name IN ('Angemon', 'Boarmon');
+COMMIT;
+SELECT * from animals;
+ROLLBACK;
+
 
 
 
