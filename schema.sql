@@ -56,3 +56,6 @@ CONSTRAINT fk_species FOREIGN KEY (spec_id) REFERENCES species(id)
 );
 SELECT * FROM specializations;
 
+-- Add an email column to your owners table
+ALTER TABLE owners ADD COLUMN email VARCHAR(120);
+
